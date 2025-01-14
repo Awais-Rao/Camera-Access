@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Front Camera Capture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        video, canvas {
+            margin: 20px auto;
+            max-width: 100%;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webcam Front Camera Capture</h1>
+    <video id="video" autoplay playsinline></video>
+    <br>
+    <button id="capture">Capture Photo</button>
+    <br>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const constraints = {
+            video: {
+                facingMode: "user" // Use "environment" for the back camera
+            }
+        };
+
+        // Access the user's camera
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error("Error accessing camera:", err);
+                alert("Unable to access camera. Please check your permissions.");
+            });
+
+        // Capture the photo
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.style.display = 'block';
+
+            // Display or save the image
+            const imageData = canvas.toDataURL('image/png');
+            console.log("Captured Image Data URL:", imageData);
+            alert("Photo captured!");
+        });
+    </script>
+</body>
+</html>
